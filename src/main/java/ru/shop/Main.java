@@ -74,6 +74,19 @@ public class Main {
             System.out.println(order);
         }
 
+        System.out.println("-- All PRODUCTS --");
+        for (Product product : productService.findAll()){
+            System.out.println(product);
+        }
+        System.out.println("-- All SERVECIS --");
+        for (Product product : productService.findByProductType(ProductType.SERVICE)){
+            System.out.println(product);
+        }
+        System.out.println("-- All GOOD --");
+        for (Product product : productService.findByProductType(ProductType.GOOD)){
+            System.out.println(product);
+        }
+
     }
 
 }
