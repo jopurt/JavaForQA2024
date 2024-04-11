@@ -1,5 +1,6 @@
 package ru.shop;
 
+import ru.shop.exception.BadOrderCountException;
 import ru.shop.model.Customer;
 import ru.shop.model.Order;
 import ru.shop.model.Product;
@@ -7,6 +8,8 @@ import ru.shop.model.ProductType;
 import ru.shop.repository.CustomerRepository;
 import ru.shop.repository.OrderRepository;
 import ru.shop.repository.ProductRepository;
+import ru.shop.service.CustomerService;
+import ru.shop.service.OrderService;
 import ru.shop.service.ProductService;
 
 import java.util.UUID;
@@ -18,9 +21,14 @@ public class Main {
                 new ProductRepository()
         );
 
-        CustomerRepository customerRepository = new CustomerRepository();
+        CustomerService customerService = new CustomerService(
+                new CustomerRepository()
+        );
 
-        OrderRepository orderRepository = new OrderRepository();
+        OrderService orderService = new OrderService(
+                new OrderRepository()
+        );
+
 
         Product ladaKalina = new Product(UUID.randomUUID(), "Lada Kalina", 100, ProductType.GOOD);
         productService.save(ladaKalina);
@@ -35,34 +43,23 @@ public class Main {
 
 
         Customer ivan = new Customer(UUID.randomUUID(), "Ivanushka", "123456", 16);
-        customerRepository.save(ivan);
-        System.out.println(ivan);
+        customerService.save(ivan);
+
 
         Customer misha = new Customer(UUID.randomUUID(), "Mishgan", "777777", 19);
-        customerRepository.save(misha);
-        System.out.println(misha);
+        customerService.save(misha);
 
-        Order order1 = new Order(
-                UUID.randomUUID(),
-                ivan.getId(),
-                ladaKalina.getId(),
-                2,
-                200
-        );
-        orderRepository.save(order1);
-        System.out.println(order1);
 
-        Order order2 = new Order(
-                UUID.randomUUID(),
-                ivan.getId(),
-                fordMustang.getId(),
-                3,
-                300
-        );
-        orderRepository.save(order2);
-        System.out.println(order2);
+        orderService.add(misha,fordMustang,2);
+        orderService.add(ivan,fordMustang,3);
 
-        for (Customer customer : customerRepository.findAll()){
+        try{
+            orderService.add(ivan,ladaKalina,0);
+        }catch (BadOrderCountException e){
+            System.out.println("BadOrderCountException");
+        }
+
+        for (Customer customer : customerService.findAll()){
             System.out.println(customer);
         }
 
@@ -70,7 +67,7 @@ public class Main {
             System.out.println(product);
         }
 
-        for (Order order : orderRepository.findAll()){
+        for (Order order : orderService.findAll()){
             System.out.println(order);
         }
 
@@ -85,6 +82,18 @@ public class Main {
         System.out.println("-- All GOOD --");
         for (Product product : productService.findByProductType(ProductType.GOOD)){
             System.out.println(product);
+        }
+
+        System.out.println("-- Ivan's total cost --");
+        System.out.println(orderService.getTotalCustomerAmount(ivan));
+
+        System.out.println("---Ivan orders---");
+        for (Order order : orderService.findByCustomer(ivan)){
+            System.out.println(order);
+        }
+        System.out.println("---Misha orders---");
+        for (Order order : orderService.findByCustomer(misha)){
+            System.out.println(order);
         }
 
     }

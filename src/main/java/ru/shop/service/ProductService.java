@@ -22,11 +22,12 @@ public class ProductService {
     public List<Product> findAll() {
         return repository.findAll();
     }
-//вывод всех, только продуктов, только услуг
-    public List<Product> findByProductType(ProductType productType){
-        List<Product>result=new ArrayList<>();
-        for (Product product:repository.findAll()){
-            if(product.getProductType()==productType){
+
+    //вывод всех, только продуктов, только услуг
+    public List<Product> findByProductType(ProductType productType) {
+        List<Product> result = new ArrayList<>();
+        for (Product product : repository.findAll()) {
+            if (product.getProductType() == productType) {
                 result.add(product);
             }
         }
