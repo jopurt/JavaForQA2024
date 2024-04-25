@@ -1,17 +1,20 @@
 package ru.shop.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 import ru.shop.exception.BadOrderCountException;
 import ru.shop.exception.EntityNotFoundException;
 import ru.shop.model.Customer;
 import ru.shop.model.Order;
 import ru.shop.model.Product;
+import ru.shop.repository.CustomerRepository;
 import ru.shop.repository.OrderRepository;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Service
 @RequiredArgsConstructor
 public class OrderService {
 
