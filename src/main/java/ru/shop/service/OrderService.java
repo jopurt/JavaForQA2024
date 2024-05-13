@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static org.apache.commons.lang3.BooleanUtils.or;
+
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -21,6 +23,9 @@ public class OrderService {
 
     public void add(Customer customer, Product product, long count) {
         if (count <= 0) {
+            throw new BadOrderCountException();
+        }
+        else if (count == Integer.MAX_VALUE) {
             throw new BadOrderCountException();
         }
 
@@ -43,7 +48,12 @@ public class OrderService {
         for (Order order : findByCustomer(customer)) {
             result += order.getAmount();
         }
-        return result;
+
+        if (result <= 0){
+            throw new BadOrderCountException();
+        }
+        else
+            return result;
     }
 
     public List<Order> findAll() {

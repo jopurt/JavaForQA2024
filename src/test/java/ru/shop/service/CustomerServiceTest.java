@@ -3,6 +3,7 @@ package ru.shop.service;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -11,20 +12,21 @@ import ru.shop.exception.EntityNotFoundException;
 import ru.shop.model.Customer;
 import ru.shop.repository.CustomerRepository;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 class CustomerServiceTest {
 
-    private final CustomerRepository repository = Mockito.mock();
+    private final CustomerRepository repository = mock();
     private final CustomerService customerService = new CustomerService(repository);
 
     @Test
-    public void shouldGetCustomer() {
+    void shouldGetCustomer() {
         // given
         UUID customerId= UUID.randomUUID();
         Customer mockedCustomer=new Customer();
-        Mockito.when(repository.findById(customerId)).thenReturn(Optional.of(mockedCustomer));
+        when(repository.findById(customerId)).thenReturn(Optional.of(mockedCustomer));
 
         // when
         Customer customer = customerService.getById(customerId);
@@ -40,7 +42,7 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void shouldThrowWhenCustomerNotFound() {
+    void shouldThrowWhenCustomerNotFound() {
         // then
         //Было
         //Assertions.assertThrows(
@@ -53,28 +55,42 @@ class CustomerServiceTest {
     }
 
     @Test
-    public void shouldSaveCustomer() {
+    void shouldSaveCustomer() {
         // given
         Customer customer= new Customer();
         // when
         customerService.save(customer);
 
         // then
-        Mockito.verify(repository, Mockito.times(1)).save(customer);
+        verify(repository, Mockito.times(1)).save(customer);
 
     }
+
 
     @Test
-    public void shouldUseRepositoryFindAllWhenCallFindAllCustomers() {
-        // given
+    void shouldUseRepositoryFindAllWhenCallFindAllCustomers2() {
+        //given
 
-        // when
-        customerService.findAll();
+        UUID customerId1 = UUID.randomUUID();
+        UUID customerId2 = UUID.randomUUID();
 
-        // then
-        Mockito.verify(repository.findAll());
+        Customer customer1 = new Customer(customerId1, "Dima", "790010201", 10);
+        Customer customer2 = new Customer(customerId2, "Vasya", "994930", 45);
 
+        //when
+
+        when(repository.findAll()).thenReturn(List.of(customer1, customer2));
+
+        // вызов метода у customerService
+        List<Customer> customers = customerService.findAll();
+
+        //then
+
+        //вызвался ли метод у репозитория
+        verify(repository).findAll();
+
+        // соответствие количества
+        assertEquals(2, customers.size());
     }
-
 
 }

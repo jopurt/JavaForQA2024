@@ -1,6 +1,8 @@
 package ru.shop.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.shop.model.Customer;
 import ru.shop.service.CustomerService;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
+
 @RequiredArgsConstructor
 @RequestMapping("/customer")
 public class CustomerController {
@@ -21,7 +24,7 @@ public class CustomerController {
     }
 
     @PostMapping
-    public void save(@RequestBody Customer customer) {
+    public void save(@RequestBody @Valid Customer customer) {
         customerService.save(customer);
     }
 
